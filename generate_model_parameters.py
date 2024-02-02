@@ -6,11 +6,11 @@ import pandas as pd
 import os
 
 # get all point clouds in the folder
-objpath = "models/redandblack/"
+objpath = "models/Longdress/"
 point_clouds = []
 for files in os.listdir(objpath):
     if files.endswith(".ply"):
-        point_clouds.append("redandblack/"+files)
+        point_clouds.append("Longdress/"+files)
 print(point_clouds)
 
 all_pcs = []
