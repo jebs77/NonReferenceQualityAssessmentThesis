@@ -41,12 +41,14 @@ def get_feature_vector(objpath):
   nss_params = []
   # compute color nss features
   for tmp in [l,a,b]:
-      params = get_color_nss_param(tmp)
+      tmp_cupy = cp.array(tmp)
+      params = get_color_nss_param(tmp_cupy)
       #flatten the feature vector
       nss_params = nss_params + [i for item in params for i in item]
   # compute geomerty nss features
   for tmp in [curvature,anisotropy,linearity,planarity,sphericity]:
-      params = get_geometry_nss_param(tmp)
+      tmp_cupy = cp.array(tmp)
+      params = get_geometry_nss_param(tmp_cupy)
       #flatten the feature vector
       nss_params = nss_params + [i for item in params for i in item]
   return nss_params
