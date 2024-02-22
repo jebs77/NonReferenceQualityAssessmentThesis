@@ -6,9 +6,9 @@ from scipy import stats
 
 # get data according to the train test name lists, return scaled train and test set
 def get_data(train_name_list,test_name_list):
-    feature_data = pd.read_csv("loot_param.csv",index_col = 0,keep_default_na=False)
+    feature_data = pd.read_csv("SJTCU/features.csv",index_col = 0,keep_default_na=False)
     feature_data = feature_data[feature_data.columns.values]
-    score_data = pd.read_csv("mos.csv")
+    score_data = pd.read_csv("SJTCU/mos.csv")
     train_set = []
     train_score = []
     test_set = []
