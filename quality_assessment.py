@@ -5,34 +5,49 @@ import pandas as pd
 from scipy import stats
 
 # get data according to the train test name lists, return scaled train and test set
-def get_data(train_name_list,test_name_list):
-    feature_data = pd.read_csv("SJTCU/features.csv",index_col = 0,keep_default_na=False)
-    feature_data = feature_data[feature_data.columns.values]
-    score_data = pd.read_csv("SJTCU/mos.csv")
-    train_set = []
-    train_score = []
-    test_set = []
-    test_score = []
-    for name in train_name_list:
-        score = score_data[name].tolist()
-        train_score = train_score + score
-        for i in range(42):
-            name_pc = name+str(i)
-            data = feature_data.loc[name_pc,:].tolist()
-            train_set.append(data)
+def get_data(index):
     
-    for name in test_name_list:
-        score = score_data[name].tolist()
-        test_score = test_score + score
-        for i in range(42):
-            name_pc = name+str(i)
-            data = feature_data.loc[name_pc,:].tolist()
-            test_set.append(data)
+    feature_data = pd.read_csv("vsense_complete.csv",keep_default_na=False)
+    feature_data = feature_data.loc[:, feature_data.columns != "score"]
+    feature_data.drop(columns="name", inplace=True)
+
+    score_data = pd.read_csv("vsense_complete.csv")
+    score_data = score_data["score"]
+
+    train_set = feature_data
+    train_score = score_data
+    
+    test_set = train_set.iloc[4800*index:4800*index+4800]
+    print("printing test set")
+    print(test_set.head())
+    print("length of the test set:", len(test_set))
+    train_set.drop(train_set.index[4800*index:4800*index+4800], inplace = True)
+    print("printing test set")
+    print(train_set.head())
+    print("length of the train set:" , len(train_set))
+    test_score = train_score.iloc[4800*index:4800*index+4800]
+    train_score.drop(train_score.index[4800*index:4800*index+4800], inplace= True)
+        
+    # for name in train_name_list:
+    #     score = score_data[name].tolist()
+    #     train_score = train_score + score
+    #     for i in range(42):
+    #         name_pc = name+str(i)
+    #         data = feature_data.loc[name_pc,:].tolist()
+    #         train_set.append(data)
+    
+    # for name in test_name_list:
+    #     score = score_data[name].tolist()
+    #     test_score = test_score + score
+    #     for i in range(42):
+    #         name_pc = name+str(i)
+    #         data = feature_data.loc[name_pc,:].tolist()
+    #         test_set.append(data)
     # preprocessing      
     scaler = MinMaxScaler()
     train_set = scaler.fit_transform(train_set)
     test_set = scaler.transform(test_set)
-    return train_set,np.array(train_score)/10,test_set,np.array(test_score)/10
+    return train_set,np.array(train_score)/100,test_set,np.array(test_score)/100
 
 
 
@@ -42,17 +57,13 @@ if __name__ == '__main__':
     srcc =[]
     krcc = []
     cnt = 0
-    # begin 9-folder cross data validation split
-    for i in range(9):
-        cnt =cnt+1
-        print(cnt)
-        # generate train_name_list and test_name_list
-        train_name_list = ['redandblack','Romanoillamp','loot','soldier','ULB Unicorn','longdress','statue','shiva','hhi']
-        test_name_list = [train_name_list.pop(i)]
+    # begin 4-folder cross data validation split
+    for i in range(4):
+        
         # get data
         print('Begin split ' + str(i+1) + ' and use the following list as test set:')
-        print(test_name_list)
-        train_set,train_score,test_set,test_score = get_data(train_name_list,test_name_list)
+
+        train_set,train_score,test_set,test_score = get_data(i)
         # begin training
         print('Begin training!')
         svr = SVR(kernel='rbf')
