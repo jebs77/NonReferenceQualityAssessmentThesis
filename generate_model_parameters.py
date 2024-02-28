@@ -12,7 +12,7 @@ base_folder = "VSENSE"
 ply_pattern = f"{base_folder}/**/*.ply"
 
 point_clouds = glob.glob(ply_pattern, recursive=True)
-
+print(point_clouds)
 # Print the list of .ply files
 # for file in point_clouds:
 #     print(file)
@@ -32,6 +32,7 @@ for pc in point_clouds:
         average_time += new_time
         average_time /= i
     print("average time :" + str(average_time))
+    print(pc)
     features = fe.get_feature_vector(pc)
     ff.print_info(features)
     features.insert(0, pc)
