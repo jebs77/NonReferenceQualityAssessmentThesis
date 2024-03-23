@@ -8,7 +8,7 @@ import glob
 
 # get all point clouds in the folder
 # the base folder for the feature extraction
-base_folder = "statistical_features/VSENSE"
+base_folder = "statistical_features/WPC"
 ply_pattern = f"{base_folder}/**/*.ply"
 
 point_clouds = glob.glob(ply_pattern, recursive=True)
@@ -30,8 +30,8 @@ for pc in point_clouds:
     features = fe.get_feature_vector(pc)
     ff.print_info(features)
     features.insert(0, pc)
-    ff.append_csv("test.csv", features)
-df = pd.read_csv("test.csv")
+    ff.append_csv("WPC_NSS.csv", features)
+df = pd.read_csv("WPC_NSS.csv")
 # all_names = df["name"].tolist()
 end_time = time.time()-start_time
 print("final time is"+ str(end_time))
