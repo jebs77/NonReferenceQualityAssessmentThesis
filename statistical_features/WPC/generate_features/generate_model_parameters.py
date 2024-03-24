@@ -30,8 +30,8 @@ for pc in point_clouds:
     features = fe.get_feature_vector(pc)
     ff.print_info(features)
     features.insert(0, pc)
-    ff.append_csv("WPC_NSS.csv", features)
-df = pd.read_csv("WPC_NSS.csv")
+    ff.append_csv("statistical_features/WPC/WPC_NSS.csv", features)
+df = pd.read_csv("statistical_features/WPC/WPC_NSS.csv")
 # all_names = df["name"].tolist()
 end_time = time.time()-start_time
 print("final time is"+ str(end_time))
