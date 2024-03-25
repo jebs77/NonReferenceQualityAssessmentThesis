@@ -19,11 +19,11 @@ class MMDataset(data.Dataset):
         self.ply_mos = dataInfo['mos']
         self.crop_size = crop_size
         self.data_dir_2d = data_dir_2d
-        self.transform = transform
-        self.img_length_read = img_length_read
-        self.patch_length_read = patch_length_read
-        self.npoint = npoint
-        self.data_dir_pc = data_dir_pc
+        self.transform = transform                          #the transformation we want to apply to the pictures (224x224 crop) and conversion to tensor
+        self.img_length_read = img_length_read              #the amount of projection images we want to use (not just the 4 from the paper)
+        self.patch_length_read = patch_length_read          #needs to be removed (number of point cloud patches)
+        self.npoint = npoint                                #needs to be removed (number of points per patch)
+        self.data_dir_pc = data_dir_pc                      #needs to be removed (directory to the point clouds)
         self.length = len(self.ply_name)
         self.is_train = is_train
 
@@ -32,14 +32,16 @@ class MMDataset(data.Dataset):
 
     def __getitem__(self, idx):
 
+        #get the nth     
         img_name = self.ply_name.iloc[idx,0] 
         frames_dir = os.path.join(self.data_dir_2d, img_name)
 
-        img_channel = 3
-        img_height_crop = self.crop_size
-        img_width_crop = self.crop_size
-       
-        img_length_read = self.img_length_read       
+        img_channel = 3                                     #(probably) the colour channels present (R, G, B)
+        img_height_crop = self.crop_size                    #crop image to 224x224
+        img_width_crop = self.crop_size                         
+
+        #initialise a tensor to store RGB values for all cropped projections
+        img_length_read = self.img_length_read              
         transformed_img = torch.zeros([img_length_read, img_channel, img_height_crop, img_width_crop])
         # read images
         img_read_index = 0
@@ -55,7 +57,7 @@ class MMDataset(data.Dataset):
                 img_read_index += 1
             else:
                 print(imge_name)
-                print('Image do not exist!')
+                print('Image does not exist!')
 
         if img_read_index < img_length_read:
             for j in range(img_read_index, img_length_read):

@@ -49,8 +49,8 @@ def parse_args():
     parser.add_argument('--learning_rate', default=0.001, type=float, help='learning rate in training')
     parser.add_argument('--decay_rate', type=float, default=1e-4, help='decay rate')
     parser.add_argument('--model', default='', type=str)
-    parser.add_argument('--data_dir_2d', default='', type=str, help = 'path to the images')
-    parser.add_argument('--data_dir_pc', default='', type=str, help = 'path to the patches')
+    parser.add_argument('--data_dir_2d', default='', type=str, help = 'path to the images')     
+    parser.add_argument('--data_dir_pc', default='', type=str, help = 'path to the patches')                #not for us
     parser.add_argument('--patch_length_read', default=6, type=int, help = 'number of the using patches')
     parser.add_argument('--img_length_read', default=4, type=int, help = 'number of the using images')
     parser.add_argument('--loss', default='l2rank', type=str)
@@ -73,10 +73,10 @@ if __name__=='__main__':
     num_epochs = args.num_epochs
     batch_size = args.batch_size
     database = args.database
-    patch_length_read = args.patch_length_read
+    patch_length_read = args.patch_length_read      #not needed for NSS
     img_length_read = args.img_length_read
     data_dir_2d = args.data_dir_2d
-    data_dir_pc = args.data_dir_pc  
+    data_dir_pc = args.data_dir_pc                  #change to data for the NSS
     best_all = np.zeros([args.k_fold_num, 4])
 
     for k_fold_id in range(1,args.k_fold_num + 1):
@@ -86,6 +86,7 @@ if __name__=='__main__':
         if torch.cuda.is_available():
             os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 
+        #switch between different databases
         if database == 'SJTU':           
             train_filename_list = 'csvfiles/sjtu_data_info/train_'+str(k_fold_id)+'.csv'
             test_filename_list = 'csvfiles/sjtu_data_info/test_'+str(k_fold_id)+'.csv'
@@ -96,8 +97,10 @@ if __name__=='__main__':
             train_filename_list = 'csvfiles/wpc2.0_data_info/train_'+str(k_fold_id)+'.csv'
             test_filename_list = 'csvfiles/wpc2.0_data_info/test_'+str(k_fold_id)+'.csv'
     
+        #Crop pictures into a random patch of 224x224 pixels, turn them from rgb value to Tensor (0-255 to 0-1.0) 
+        #and finaly normalise them with a value gathered from a large dataset
         transformations_train = transforms.Compose([transforms.RandomCrop(224),transforms.ToTensor(),\
-                transforms.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
+                transforms.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])           
         transformations_test = transforms.Compose([transforms.CenterCrop(224),transforms.ToTensor(),\
                 transforms.Normalize(mean = [0.485, 0.456, 0.406], std = [0.229, 0.224, 0.225])])
 
